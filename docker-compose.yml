@@ -1,0 +1,61 @@
+version: '2.1'
+services:
+  portal-webadaptor:
+    image: ags-docker.olympus.esri.com/arcgis_portal_webadaptor_linux:latest
+    hostname: akhalid.esri.com
+    container_name: PORTALWA
+    environment:
+      -  HOST_IP_ADDRESS=10.29.77.181 # your machine ip
+    ports:
+      -  "80:80"
+      -  "8080:8080"
+      -  "443:443"
+      -  "8443:8443"
+      -  "7080:7080"
+      -  "7443:7443"
+      -  "7005:7005"
+      -  "7099:7099"
+      -  "7199:7199"
+      -  "7654:7654"
+      -  "5005:5005"
+    depends_on:
+      datastore:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    networks:
+      -  webgis
+  server:
+    image: ags-docker.olympus.esri.com/arcgis_server_linux:latest
+    hostname: SERVER
+    container_name: SERVER
+    ports:
+      -  "6080:6080"
+      -  "6443:6443"
+    networks:
+      -  webgis
+    healthcheck:
+      test: ["CMD", "/usr/bin/curl", "-Lkf", "https://localhost:6443/arcgis/manager"]
+      interval: 5m
+      timeout: 30s
+      retries: 5
+  datastore:
+    image: ags-docker.olympus.esri.com/arcgis_datastore_linux:latest
+    hostname: DATASTORE
+    container_name: DATASTORE
+    ports:
+      -  "2443:2443"
+      -  "9876:9876"
+    networks:
+      -  webgis
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/usr/bin/curl", "-Lkf", "https://localhost:2443/arcgis/datastore"]
+      interval: 2m
+      timeout: 30s
+      retries: 5
+networks:
+  webgis:
+    driver: bridge
