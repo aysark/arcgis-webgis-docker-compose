@@ -1,11 +1,11 @@
 version: '2.1'
 services:
   portal-webadaptor:
-    image: ags-docker.olympus.esri.com/arcgis_portal_webadaptor_linux:latest
-    hostname: akhalid.esri.com
+    image: arcgis_portal_webadaptor_linux:latest
+    hostname: your-host-name.com
     container_name: PORTALWA
     environment:
-      -  HOST_IP_ADDRESS=10.29.77.181 # your machine ip
+      -  HOST_IP_ADDRESS=your_machine_ip
     ports:
       -  "80:80"
       -  "8080:8080"
@@ -26,7 +26,7 @@ services:
     networks:
       -  webgis
   server:
-    image: ags-docker.olympus.esri.com/arcgis_server_linux:latest
+    image: arcgis_server_linux:latest
     hostname: SERVER
     container_name: SERVER
     ports:
@@ -40,7 +40,7 @@ services:
       timeout: 30s
       retries: 5
   datastore:
-    image: ags-docker.olympus.esri.com/arcgis_datastore_linux:latest
+    image: arcgis_datastore_linux:latest
     hostname: DATASTORE
     container_name: DATASTORE
     ports:
